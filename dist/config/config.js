@@ -31,7 +31,7 @@ class NConfig {
     get(key) {
         const setting = this.settings.get(key);
         if (setting) {
-            if (this.okTime(setting.ttl || 0, setting.createdAt)) {
+            if (this.okTime(setting.ttl || 0, setting.createdAt || 0)) {
                 return setting.value;
             }
             this.settings.delete(key);

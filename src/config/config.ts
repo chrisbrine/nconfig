@@ -43,7 +43,7 @@ export class NConfig {
   public get(key: string) {
     const setting = this.settings.get(key);
     if (setting) {
-      if (this.okTime(setting.ttl || 0, setting.createdAt)) {
+      if (this.okTime(setting.ttl || 0, setting.createdAt || 0)) {
         return setting.value;
       }
       this.settings.delete(key);

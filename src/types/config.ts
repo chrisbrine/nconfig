@@ -14,7 +14,7 @@ export interface ConfigValueSettings {
   value: ConfigValueTypes;
   keys?: ConfigFileKeys | ConfigFileKeys[];
   ttl?: number;
-  createdAt: number;
+  createdAt?: number;
 }
 
 export type ConfigSettings = Map<ConfigKey, ConfigValueSettings>;
