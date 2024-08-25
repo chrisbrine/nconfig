@@ -1,5 +1,5 @@
 import { ConfigFormat, ConfigValue, ConfigValueTypes } from "../types";
-export declare class Config {
+export declare class NConfig {
     private config;
     private settings;
     private ttl;

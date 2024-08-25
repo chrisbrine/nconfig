@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Config = void 0;
+exports.NConfig = void 0;
 const utils_1 = require("../utils");
-class Config {
+class NConfig {
     constructor(config, defaultTtl = 0) {
         this.config = {};
         this.settings = new Map();
@@ -101,4 +101,4 @@ class Config {
         return key in this.config;
     }
 }
-exports.Config = Config;
+exports.NConfig = NConfig;
