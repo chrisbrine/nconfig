@@ -57,7 +57,9 @@ export class NConfig {
         value = getKeys(
           keys as ConfigFileKeys | ConfigFileKeys[],
         ) as ConfigValueTypes;
-        this.setSetting(key, item, value);
+        if (value) {
+          this.setSetting(key, item, value);
+        }
       }
       return value;
     }
