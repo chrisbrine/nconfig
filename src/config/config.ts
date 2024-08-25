@@ -8,7 +8,7 @@ import {
 } from "../types";
 import { getKeys } from "../utils";
 
-export class Config {
+export class NConfig {
   private config: ConfigFormat = {};
   private settings: ConfigSettings = new Map();
   private ttl: number;
