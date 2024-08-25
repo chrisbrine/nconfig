@@ -58,8 +58,18 @@ const json = (file: string, keys: FileObjectKeys): unknown => {
   if (!file) {
     return undefined;
   }
-  const result: FileObject = JSON.parse(fs.readFileSync(file, "utf8"));
+  if (!fs.existsSync(file)) {
+    return undefined;
+  }
+  const fileData = fs.readFileSync(file, "utf8");
+  let result: FileObject;
+  try {
+    result = JSON.parse(fileData);
+  } catch {
+    return undefined;
+  }
   caching.set(slug, result);
+  return getItem(result, keys);
 };
 
 const processEnv = (data: string): FileObject => {
@@ -88,8 +98,12 @@ const env = (file: string, keys: FileObjectKeys): unknown => {
   if (data) {
     return getItemSingle(data as FileObject, keys);
   }
+  if (!fs.existsSync(file)) {
+    return undefined;
+  }
   const result: FileObject = processEnv(fs.readFileSync(file, "utf8"));
   caching.set(slug, result);
+  return getItemSingle(result, keys);
 };
 
 export const PARSE = {

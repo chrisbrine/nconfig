@@ -41,10 +41,16 @@ class NConfig {
             let value = typeof item === "object" && "value" in item ? item.value : item;
             if (typeof item === "object" && "keys" in item) {
                 const keys = item.keys;
-                value = (0, utils_1.getKeys)(keys);
+                const newValue = (0, utils_1.getKeys)(keys);
+                if (newValue) {
+                    value = newValue;
+                }
                 if (value) {
                     this.setSetting(key, item, value);
                 }
+            }
+            else if (value) {
+                this.setSetting(key, item, value);
             }
             return value;
         }

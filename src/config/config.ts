@@ -54,12 +54,17 @@ export class NConfig {
         typeof item === "object" && "value" in item ? item.value : item;
       if (typeof item === "object" && "keys" in item) {
         const keys = item.keys;
-        value = getKeys(
+        const newValue = getKeys(
           keys as ConfigFileKeys | ConfigFileKeys[],
         ) as ConfigValueTypes;
+        if (newValue) {
+          value = newValue;
+        }
         if (value) {
           this.setSetting(key, item, value);
         }
+      } else if (value) {
+        this.setSetting(key, item, value);
       }
       return value;
     }

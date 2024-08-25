@@ -78,8 +78,19 @@ const json = (file, keys) => {
     if (!file) {
         return undefined;
     }
-    const result = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (!fs.existsSync(file)) {
+        return undefined;
+    }
+    const fileData = fs.readFileSync(file, "utf8");
+    let result;
+    try {
+        result = JSON.parse(fileData);
+    }
+    catch (_a) {
+        return undefined;
+    }
     caching.set(slug, result);
+    return getItem(result, keys);
 };
 const processEnv = (data) => {
     // will process the environment file and return the object
@@ -104,8 +115,12 @@ const env = (file, keys) => {
     if (data) {
         return getItemSingle(data, keys);
     }
+    if (!fs.existsSync(file)) {
+        return undefined;
+    }
     const result = processEnv(fs.readFileSync(file, "utf8"));
     caching.set(slug, result);
+    return getItemSingle(result, keys);
 };
 exports.PARSE = {
     json,
