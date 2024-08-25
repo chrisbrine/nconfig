@@ -1,0 +1,39 @@
+{
+  "name": "@strbjun/nconfig",
+  "version": "0.1.0",
+  "description": "A configuration library that supports environment variables, JSON files, and .env files",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "env",
+    "environment"
+  ],
+  "author": "Chris Brine <chrisbrine.web@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisbrine/nconfig.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisbrine/nconfig/issues"
+  },
+  "homepage": "https://github.com/chrisbrine/nconfig#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/express": "^4.17.21",
+    "eslint": "^9.9.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.2.0"
+  },
+  "dependencies": {
+    "@strbjun/ncache": "^0.1.0"
+  }
+}
