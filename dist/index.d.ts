@@ -1,2 +1,3 @@
 export * from "./config";
-export { ConfigFileTypes } from "./types";
+export * from "./spaces";
+export { ConfigFileTypes, ValueTypes } from "./types";

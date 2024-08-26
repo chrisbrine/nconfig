@@ -1,6 +1,6 @@
 {
   "name": "@strbjun/nconfig",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A configuration library that supports environment variables, JSON files, and .env files",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -35,6 +35,6 @@
     "typescript-eslint": "^8.2.0"
   },
   "dependencies": {
-    "@strbjun/ncache": "^0.1.0"
+    "@strbjun/ncache": "^0.1.2"
   }
 }

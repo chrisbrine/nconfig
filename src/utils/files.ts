@@ -48,10 +48,15 @@ const checkEnv = (keys: FileObjectKeys): unknown => {
   return keys in process.env ? process.env[keys] : undefined;
 };
 
-const json = (file: string, keys: FileObjectKeys): unknown => {
+const json = (
+  file: string,
+  keys: FileObjectKeys,
+  fileTTL?: number,
+): unknown => {
   // will get the json file and grab the keys as needed, but use caching
   const slug = `${json}: ${file}`;
   const data = caching.get(slug);
+  caching.setTTL(fileTTL || 0);
   if (data) {
     return getItem(data as FileObject, keys);
   }
@@ -83,8 +88,9 @@ const processEnv = (data: string): FileObject => {
   return result;
 };
 
-const env = (file: string, keys: FileObjectKeys): unknown => {
+const env = (file: string, keys: FileObjectKeys, fileTTL?: number): unknown => {
   const envResult = checkEnv(keys);
+  caching.setTTL(fileTTL || 0);
   if (envResult) {
     return envResult;
   }

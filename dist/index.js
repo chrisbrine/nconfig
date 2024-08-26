@@ -14,7 +14,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfigFileTypes = void 0;
+exports.ValueTypes = exports.ConfigFileTypes = void 0;
 __exportStar(require("./config"), exports);
+__exportStar(require("./spaces"), exports);
 var types_1 = require("./types");
 Object.defineProperty(exports, "ConfigFileTypes", { enumerable: true, get: function () { return types_1.ConfigFileTypes; } });
+Object.defineProperty(exports, "ValueTypes", { enumerable: true, get: function () { return types_1.ValueTypes; } });

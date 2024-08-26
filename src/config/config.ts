@@ -1,10 +1,13 @@
 import {
   ConfigFileKeys,
+  ConfigFileTypes,
   ConfigFormat,
+  ConfigOptions,
   ConfigSettings,
   ConfigValue,
   ConfigValueSettings,
   ConfigValueTypes,
+  ValueTypes,
 } from "../types";
 import { getKeys } from "../utils";
 
@@ -12,9 +15,20 @@ export class NConfig {
   private config: ConfigFormat = {};
   private settings: ConfigSettings = new Map();
   private ttl: number;
-  constructor(config: ConfigFormat, defaultTtl = 0) {
+  private fileTTL: number;
+  private defaultKeyType: ConfigFileTypes;
+  private defaultFiles: Record<string, string>;
+  private options: ConfigOptions;
+  private defaultValueType: ValueTypes;
+  constructor(config: ConfigFormat, options?: ConfigOptions) {
+    this.options = options || {};
     this.config = config;
-    this.ttl = defaultTtl;
+    this.ttl = this.options.defaultTTL || 0;
+    this.fileTTL = this.options.fileTTL || 300000;
+    this.defaultFiles = this.options.defaultFiles || {};
+    this.defaultKeyType =
+      (this.options.defaultKeyType as ConfigFileTypes) || ConfigFileTypes.ENV;
+    this.defaultValueType = this.options.defaultType || ValueTypes.NONE;
   }
 
   public okTime(ttl: number, createdAt: number): boolean {
@@ -40,24 +54,90 @@ export class NConfig {
     this.settings.set(key, result);
   }
 
+  private getTTL(setting: ConfigValueSettings) {
+    if (!setting || !setting.ttl || setting.ttl < 0) {
+      return this.ttl;
+    } else {
+      return setting.ttl || 0;
+    }
+  }
+
+  private getCreatedAt(setting: ConfigValueSettings) {
+    return setting.createdAt || 0;
+  }
+
+  private adjustItem(item: ConfigValue): ConfigValue {
+    if (typeof item !== "object") {
+      item = { value: item };
+    }
+    if (!("value" in item)) {
+      item.value = "";
+    }
+    if ("keys" in item && item.keys) {
+      if (!Array.isArray(item.keys)) {
+        item.keys = [item.keys as ConfigFileKeys] as ConfigFileKeys[];
+      }
+      item.keys.forEach((key) => {
+        if (!("type" in key)) {
+          key.type = this.defaultKeyType || "env";
+        }
+        if (!("file" in key)) {
+          key.file = this.defaultFiles[key.type as ConfigFileTypes] || "";
+        }
+      });
+    } else {
+      item.keys = [];
+    }
+    if (!("ttl" in item)) {
+      item.ttl = this.ttl;
+    }
+    if (!("type" in item)) {
+      item.type = this.defaultValueType;
+    }
+    return item;
+  }
+
+  private verifyType(value: ConfigValueTypes, type: ValueTypes) {
+    if (type === ValueTypes.NONE) {
+      return true;
+    }
+    if (type === ValueTypes.STRING) {
+      return typeof value === "string";
+    }
+    if (type === ValueTypes.NUMBER) {
+      return typeof value === "number";
+    }
+    if (type === ValueTypes.BOOLEAN) {
+      return typeof value === "boolean";
+    }
+    if (type === ValueTypes.OBJECT) {
+      return typeof value === "object";
+    }
+    if (type === ValueTypes.ARRAY) {
+      return Array.isArray(value);
+    }
+    return false;
+  }
+
   public get(key: string) {
     const setting = this.settings.get(key);
     if (setting) {
-      if (this.okTime(setting.ttl || 0, setting.createdAt || 0)) {
+      if (this.okTime(this.getTTL(setting), this.getCreatedAt(setting))) {
         return setting.value;
       }
       this.settings.delete(key);
     }
     if (key in this.config) {
-      const item = this.config[key];
+      const item = this.adjustItem(this.config[key]);
       let value: ConfigValueTypes =
         typeof item === "object" && "value" in item ? item.value : item;
       if (typeof item === "object" && "keys" in item) {
         const keys = item.keys;
-        const newValue = getKeys(
-          keys as ConfigFileKeys | ConfigFileKeys[],
-        ) as ConfigValueTypes;
-        if (newValue) {
+        const newValue = getKeys(keys as ConfigFileKeys | ConfigFileKeys[], {
+          fileTTL: this.fileTTL,
+          valueType: (item.type as ValueTypes) || ValueTypes.NONE,
+        }) as ConfigValueTypes;
+        if (newValue && this.verifyType(newValue, item.type as ValueTypes)) {
           value = newValue;
         }
         if (value) {
